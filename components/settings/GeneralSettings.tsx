@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Building2 } from 'lucide-react'
+import { toast } from 'react-hot-toast'
 
 interface GeneralSettingsProps {
   initialOrgName?: string
@@ -32,10 +33,10 @@ export default function GeneralSettings({
           body: JSON.stringify({ key, value })
         })
       }
-      alert('Configuración guardada correctamente. Refresca la página para ver los cambios.')
+      toast.success('Configuración guardada correctamente. Refresca la página para ver los cambios.')
     } catch (error) {
       console.error('Error al guardar configuración:', error)
-      alert('Error al guardar configuración')
+      toast.error('Error al guardar configuración')
     } finally {
       setLoading(false)
     }

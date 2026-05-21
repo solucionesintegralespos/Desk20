@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Send, Paperclip, Sparkles, File, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'react-hot-toast'
 
 interface MessageFormProps {
   ticketId: string
@@ -130,7 +131,7 @@ export default function MessageForm({ ticketId, currentUserId }: MessageFormProp
       router.refresh()
     } catch (error) {
       console.error('Error sending message:', error)
-      alert('Error al enviar el mensaje')
+      toast.error('Error al enviar el mensaje')
     } finally {
       setLoading(false)
       setAiLoading(false)

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { CheckCircle } from 'lucide-react'
+import { toast } from 'react-hot-toast'
 
 interface PublicTicketFormProps {
   customerId: string
@@ -45,11 +46,11 @@ export default function PublicTicketForm({ customerId }: PublicTicketFormProps) 
           priority: 'NORMAL',
         })
       } else {
-        alert('Error al crear el ticket')
+        toast.error('Error al crear el ticket')
       }
     } catch (error) {
       console.error('Error creating ticket:', error)
-      alert('Error al crear el ticket')
+      toast.error('Error al crear el ticket')
     } finally {
       setLoading(false)
     }

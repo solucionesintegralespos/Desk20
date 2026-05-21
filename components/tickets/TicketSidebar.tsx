@@ -70,6 +70,7 @@ export default function TicketSidebar({ ticket, interactions }: TicketSidebarPro
   const [categories, setCategories] = useState<Category[]>([])
   const [isEditing, setIsEditing] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [formData, setFormData] = useState({
     type: ticket.type || '',
     categoryId: ticket.category?.id || '',
@@ -77,6 +78,7 @@ export default function TicketSidebar({ ticket, interactions }: TicketSidebarPro
   })
 
   useEffect(() => {
+    setMounted(true)
     fetchCategories()
   }, [])
 
@@ -298,8 +300,8 @@ export default function TicketSidebar({ ticket, interactions }: TicketSidebarPro
 
           <div className="flex items-center space-x-2 text-sm">
             <Calendar className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-700">
-              Cliente desde {format(new Date(ticket.customer.createdAt), 'PP', { locale: es })}
+            <span className="text-gray-700" suppressHydrationWarning>
+              Cliente desde {mounted ? format(new Date(ticket.customer.createdAt), 'PP', { locale: es }) : ''}
             </span>
           </div>
         </div>
@@ -350,8 +352,8 @@ export default function TicketSidebar({ ticket, interactions }: TicketSidebarPro
         <div className="mb-6 p-4 bg-gray-50 rounded-lg space-y-3">
           <div>
             <p className="text-xs text-gray-500 uppercase font-medium">Fecha de Creación</p>
-            <p className="text-sm text-gray-900 mt-1">
-              {format(new Date(ticket.createdAt), 'PPp', { locale: es })}
+            <p className="text-sm text-gray-900 mt-1" suppressHydrationWarning>
+              {mounted ? format(new Date(ticket.createdAt), 'PPp', { locale: es }) : ''}
             </p>
           </div>
           
@@ -359,15 +361,15 @@ export default function TicketSidebar({ ticket, interactions }: TicketSidebarPro
             <>
               <div className="pt-3 border-t border-gray-200">
                 <p className="text-xs text-gray-500 uppercase font-medium">Fecha de Resolución</p>
-                <p className="text-sm text-gray-900 mt-1">
-                  {format(new Date(ticket.updatedAt), 'PPp', { locale: es })}
+                <p className="text-sm text-gray-900 mt-1" suppressHydrationWarning>
+                  {mounted ? format(new Date(ticket.updatedAt), 'PPp', { locale: es }) : ''}
                 </p>
               </div>
               
               <div className="pt-3 border-t border-gray-200">
                 <p className="text-xs text-gray-500 uppercase font-medium">Tiempo de Resolución</p>
-                <p className="text-sm font-semibold text-primary-600 mt-1">
-                  {(() => {
+                <p className="text-sm font-semibold text-primary-600 mt-1" suppressHydrationWarning>
+                  {mounted ? (() => {
                     const diff = new Date(ticket.updatedAt).getTime() - new Date(ticket.createdAt).getTime()
                     const hours = Math.floor(diff / (1000 * 60 * 60))
                     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
@@ -378,7 +380,7 @@ export default function TicketSidebar({ ticket, interactions }: TicketSidebarPro
                       return `${days}d ${remainingHours}h`
                     }
                     return `${hours}h ${minutes}m`
-                  })()}
+                  })() : ''}
                 </p>
               </div>
             </>
@@ -387,8 +389,8 @@ export default function TicketSidebar({ ticket, interactions }: TicketSidebarPro
           {ticket.status === 'OPEN' && (
             <div className="pt-3 border-t border-gray-200">
               <p className="text-xs text-gray-500 uppercase font-medium">Tiempo Abierto</p>
-              <p className="text-sm font-semibold text-orange-600 mt-1">
-                {(() => {
+              <p className="text-sm font-semibold text-orange-600 mt-1" suppressHydrationWarning>
+                {mounted ? (() => {
                   const diff = Date.now() - new Date(ticket.createdAt).getTime()
                   const hours = Math.floor(diff / (1000 * 60 * 60))
                   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
@@ -399,7 +401,7 @@ export default function TicketSidebar({ ticket, interactions }: TicketSidebarPro
                     return `${days}d ${remainingHours}h`
                   }
                   return `${hours}h ${minutes}m`
-                })()}
+                })() : ''}
               </p>
             </div>
           )}
@@ -417,8 +419,8 @@ export default function TicketSidebar({ ticket, interactions }: TicketSidebarPro
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-gray-900">{interaction.title}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {format(new Date(interaction.createdAt), 'PPp', { locale: es })}
+                  <p className="text-xs text-gray-500 mt-1" suppressHydrationWarning>
+                    {mounted ? format(new Date(interaction.createdAt), 'PPp', { locale: es }) : ''}
                   </p>
                 </div>
               </div>

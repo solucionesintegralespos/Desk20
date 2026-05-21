@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { X } from 'lucide-react'
 import { UserRole } from '@prisma/client'
+import { toast } from 'react-hot-toast'
 
 interface EditUserModalProps {
   user: {
@@ -37,7 +38,7 @@ export default function EditUserModal({ user, onClose }: EditUserModalProps) {
     
     // Validar longitud de contraseña si se proporciona
     if (formData.newPassword && formData.newPassword.length < 6) {
-      alert('La contraseña debe tener al menos 6 caracteres')
+      toast.error('La contraseña debe tener al menos 6 caracteres')
       return
     }
     
@@ -65,11 +66,15 @@ export default function EditUserModal({ user, onClose }: EditUserModalProps) {
       })
 
       if (response.ok) {
+        toast.success('Usuario actualizado correctamente')
         router.refresh()
         onClose()
+      } else {
+        toast.error('Error al actualizar el usuario')
       }
     } catch (error) {
       console.error('Error updating user:', error)
+      toast.error('Error al actualizar el usuario')
     } finally {
       setLoading(false)
     }
@@ -85,11 +90,15 @@ export default function EditUserModal({ user, onClose }: EditUserModalProps) {
       })
 
       if (response.ok) {
+        toast.success('Usuario eliminado correctamente')
         router.refresh()
         onClose()
+      } else {
+        toast.error('Error al eliminar el usuario')
       }
     } catch (error) {
       console.error('Error deleting user:', error)
+      toast.error('Error al eliminar el usuario')
     } finally {
       setLoading(false)
     }

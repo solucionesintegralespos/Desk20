@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { toast } from 'react-hot-toast'
 
 interface Category {
   id: string
@@ -38,15 +39,16 @@ export default function EditCategoryModal({ category, onClose, onUpdate }: EditC
       })
 
       if (response.ok) {
+        toast.success('Categoría actualizada exitosamente')
         onUpdate()
         onClose()
       } else {
         const error = await response.json()
-        alert(error.error || 'Error al actualizar la categoría')
+        toast.error(error.error || 'Error al actualizar la categoría')
       }
     } catch (error) {
       console.error('Error al actualizar categoría:', error)
-      alert('Error al actualizar la categoría')
+      toast.error('Error al actualizar la categoría')
     } finally {
       setLoading(false)
     }

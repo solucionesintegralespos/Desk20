@@ -4,6 +4,7 @@ import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { MessageType, UserRole } from '@prisma/client'
 import { Paperclip, Download } from 'lucide-react'
+import { toast } from 'react-hot-toast'
 
 interface Message {
   id: string
@@ -38,7 +39,14 @@ interface MessageListProps {
   currentUserId: string
 }
 
+import { useState, useEffect } from 'react'
+
 export default function MessageList({ ticket, messages, currentUserId }: MessageListProps) {
+  const [mounted, setMounted] = useState(false)
+  
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   return (
     <div className="space-y-6">
       {/* Descripción inicial del ticket */}
@@ -61,7 +69,7 @@ export default function MessageList({ ticket, messages, currentUserId }: Message
                   </p>
                   <div className="flex items-center space-x-2 mt-1">
                     <p className="text-xs text-gray-500" suppressHydrationWarning>
-                      {format(new Date(ticket.createdAt), 'PPp', { locale: es })}
+                      {mounted ? format(new Date(ticket.createdAt), 'PPp', { locale: es }) : ''}
                     </p>
                     <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded">
                       Descripción del ticket
@@ -130,7 +138,7 @@ export default function MessageList({ ticket, messages, currentUserId }: Message
                         <button
                           key={index}
                           type="button"
-                          onClick={() => alert(`El archivo "${fileName}" es un registro visual. La funcionalidad de subir archivos reales está en desarrollo.`)}
+                          onClick={() => toast(`El archivo "${fileName}" es un registro visual. La funcionalidad de subir archivos reales está en desarrollo.`, { icon: 'ℹ️' })}
                           className="flex items-center space-x-2 text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg hover:bg-gray-100 text-left"
                         >
                           <Paperclip className="h-4 w-4 text-gray-400" />
@@ -182,7 +190,7 @@ export default function MessageList({ ticket, messages, currentUserId }: Message
                       </p>
                       <div className="flex items-center space-x-2 mt-1">
                         <p className="text-xs text-gray-500" suppressHydrationWarning>
-                          {format(new Date(message.createdAt), 'PPp', { locale: es })}
+                          {mounted ? format(new Date(message.createdAt), 'PPp', { locale: es }) : ''}
                         </p>
                         {isInternal && (
                           <span className="px-2 py-0.5 text-xs font-medium bg-yellow-200 text-yellow-800 rounded">
@@ -251,7 +259,7 @@ export default function MessageList({ ticket, messages, currentUserId }: Message
                           <button
                             key={index}
                             type="button"
-                            onClick={() => alert(`El archivo "${fileName}" es un registro visual. La funcionalidad de subir archivos reales está en desarrollo.`)}
+                            onClick={() => toast(`El archivo "${fileName}" es un registro visual. La funcionalidad de subir archivos reales está en desarrollo.`, { icon: 'ℹ️' })}
                             className="flex items-center space-x-2 text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg hover:bg-gray-100 text-left"
                           >
                             <Paperclip className="h-4 w-4 text-gray-400" />

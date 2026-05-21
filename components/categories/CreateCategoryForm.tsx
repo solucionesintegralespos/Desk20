@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { toast } from 'react-hot-toast'
 
 export default function CreateCategoryForm() {
   const router = useRouter()
@@ -27,15 +28,16 @@ export default function CreateCategoryForm() {
       })
 
       if (response.ok) {
+        toast.success('Categoría creada exitosamente')
         router.push('/dashboard/categories')
         router.refresh()
       } else {
         const error = await response.json()
-        alert(error.error || 'Error al crear la categoría')
+        toast.error(error.error || 'Error al crear la categoría')
       }
     } catch (error) {
       console.error('Error al crear categoría:', error)
-      alert('Error al crear la categoría')
+      toast.error('Error al crear la categoría')
     } finally {
       setLoading(false)
     }

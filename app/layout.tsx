@@ -4,6 +4,7 @@ import './globals.css'
 import SessionProvider from '@/components/SessionProvider'
 import { OrgProvider } from '@/components/OrgProvider'
 import { prisma } from '@/lib/prisma'
+import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -36,6 +37,7 @@ export default async function RootLayout({
         <SessionProvider>
           <OrgProvider orgName={orgName} orgLogo={orgLogo}>
             {children}
+            <Toaster position="top-right" />
           </OrgProvider>
         </SessionProvider>
       </body>
