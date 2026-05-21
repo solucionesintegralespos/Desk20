@@ -58,7 +58,16 @@ npm run prisma:push
 npm run prisma:studio
 ```
 
-4. **Iniciar el servidor de desarrollo**:
+4. **Configurar el almacenamiento de archivos locales**:
+```bash
+# 1. Asegúrate de que la carpeta exista
+mkdir -p public/uploads
+
+# 2. Dale permisos de lectura y escritura a la carpeta
+chmod -R 777 public/uploads
+```
+
+5. **Iniciar el servidor de desarrollo**:
 ```bash
 npm run dev
 ```

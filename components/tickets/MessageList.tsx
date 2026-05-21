@@ -60,7 +60,7 @@ export default function MessageList({ ticket, messages, currentUserId }: Message
                     {ticket.customer.name || ticket.customer.email}
                   </p>
                   <div className="flex items-center space-x-2 mt-1">
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500" suppressHydrationWarning>
                       {format(new Date(ticket.createdAt), 'PPp', { locale: es })}
                     </p>
                     <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded">
@@ -181,7 +181,7 @@ export default function MessageList({ ticket, messages, currentUserId }: Message
                         {message.author.name || message.author.email}
                       </p>
                       <div className="flex items-center space-x-2 mt-1">
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500" suppressHydrationWarning>
                           {format(new Date(message.createdAt), 'PPp', { locale: es })}
                         </p>
                         {isInternal && (
