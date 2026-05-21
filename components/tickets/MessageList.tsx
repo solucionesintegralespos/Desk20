@@ -112,15 +112,15 @@ export default function MessageList({ ticket, messages, currentUserId }: Message
                             href={attachment} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="flex items-center space-x-2 text-sm text-primary-600 px-3 py-2 hover:bg-primary-100 flex-1"
+                            className="flex items-center space-x-2 text-sm text-primary-600 px-3 py-3 hover:bg-primary-100 flex-1 min-w-0"
                           >
-                            <Paperclip className="h-4 w-4" />
-                            <span className="truncate max-w-xs">{fileName}</span>
+                            <Paperclip className="h-4 w-4 flex-shrink-0" />
+                            <span className="truncate block">{fileName}</span>
                           </a>
                           <a
                             href={attachment}
                             download={fileName}
-                            className="p-2 text-primary-600 hover:bg-primary-100 border-l border-primary-100 transition-colors"
+                            className="p-3 flex-shrink-0 text-primary-600 hover:bg-primary-100 border-l border-primary-100 transition-colors"
                             title="Descargar archivo"
                           >
                             <Download className="h-4 w-4" />
@@ -233,15 +233,15 @@ export default function MessageList({ ticket, messages, currentUserId }: Message
                               href={attachment}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center space-x-2 text-sm text-primary-600 px-3 py-2 hover:bg-primary-100 flex-1"
+                              className="flex items-center space-x-2 text-sm text-primary-600 px-3 py-3 hover:bg-primary-100 flex-1 min-w-0"
                             >
-                              <Paperclip className="h-4 w-4" />
-                              <span className="truncate max-w-xs">{fileName}</span>
+                              <Paperclip className="h-4 w-4 flex-shrink-0" />
+                              <span className="truncate block">{fileName}</span>
                             </a>
                             <a
                               href={attachment}
                               download={fileName}
-                              className="p-2 text-primary-600 hover:bg-primary-100 border-l border-primary-100 transition-colors"
+                              className="p-3 flex-shrink-0 text-primary-600 hover:bg-primary-100 border-l border-primary-100 transition-colors"
                               title="Descargar archivo"
                             >
                               <Download className="h-4 w-4" />
