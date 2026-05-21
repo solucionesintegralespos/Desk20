@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { User, Mail, Phone, MapPin, Calendar, MessageSquare, ShoppingCart, FileText, Tag, Clock } from 'lucide-react'
+import { User, Mail, Phone, MapPin, Calendar, MessageSquare, ShoppingCart, FileText, Tag, Clock, Info, X } from 'lucide-react'
 import { InteractionType, TicketType } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 
@@ -69,6 +69,7 @@ export default function TicketSidebar({ ticket, interactions }: TicketSidebarPro
   const router = useRouter()
   const [categories, setCategories] = useState<Category[]>([])
   const [isEditing, setIsEditing] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const [formData, setFormData] = useState({
     type: ticket.type || '',
     categoryId: ticket.category?.id || '',
@@ -115,7 +116,40 @@ export default function TicketSidebar({ ticket, interactions }: TicketSidebarPro
   }
 
   return (
-    <div className="w-80 bg-white border-l overflow-y-auto">
+    <>
+      {/* Overlay for mobile */}
+      {isOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/20 z-40"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Toggle button always visible on mobile on the right edge */}
+      {!isOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="md:hidden fixed top-24 right-0 z-30 bg-white p-2 rounded-l-md shadow-md border border-r-0 border-gray-200"
+        >
+          <Info className="h-5 w-5 text-gray-600" />
+        </button>
+      )}
+
+      <div className={`
+        fixed md:static inset-y-0 right-0 z-50 md:z-auto
+        transform ${isOpen ? 'translate-x-0' : 'translate-x-full'} md:translate-x-0
+        transition-transform duration-300 ease-in-out
+        w-80 bg-white border-l overflow-y-auto h-full shadow-2xl md:shadow-none
+      `}>
+        {/* Close button inside sidebar for mobile */}
+        {isOpen && (
+          <button 
+            onClick={() => setIsOpen(false)}
+            className="md:hidden absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
       {/* Tipo, Categoría y Horas */}
       <div className="p-6 border-b">
         <div className="flex items-center justify-between mb-4">
@@ -393,5 +427,6 @@ export default function TicketSidebar({ ticket, interactions }: TicketSidebarPro
         </div>
       </div>
     </div>
+    </>
   )
 }

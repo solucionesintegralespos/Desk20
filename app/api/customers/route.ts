@@ -29,13 +29,21 @@ export async function POST(request: Request) {
       )
     }
 
-    const { name, email, password, phone, location, address } = await request.json()
+    let { name, email, password, phone, location, address } = await request.json()
 
-    if (!name || !email || !password) {
+    if (!name) {
       return NextResponse.json(
-        { error: 'Nombre, email y contraseña son requeridos' },
+        { error: 'El nombre es requerido' },
         { status: 400 }
       )
+    }
+
+    if (!email) {
+      email = `cliente_${Date.now()}_${Math.random().toString(36).substring(7)}@desk20.local`
+    }
+    
+    if (!password) {
+      password = Math.random().toString(36).slice(-8)
     }
 
     // Check if user exists

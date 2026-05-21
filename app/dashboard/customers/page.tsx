@@ -78,11 +78,11 @@ export default async function CustomersPage() {
   const openTicketsCount = statsArray[3]
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 flex-col md:flex-row">
       <Sidebar user={user} openTicketsCount={openTicketsCount} />
       
       <main className="flex-1 overflow-y-auto">
-        <div className="p-8">
+        <div className="p-4 md:p-8">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Clientes</h1>

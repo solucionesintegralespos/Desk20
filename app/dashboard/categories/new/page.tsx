@@ -39,11 +39,11 @@ export default async function NewCategoryPage() {
   const openTicketsCount = await prisma.ticket.count({ where: { status: 'OPEN' } })
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 flex-col md:flex-row">
       <Sidebar user={user} openTicketsCount={openTicketsCount} />
       
       <main className="flex-1 overflow-y-auto">
-        <div className="p-8">
+        <div className="p-4 md:p-8">
           <Link
             href="/dashboard/categories"
             className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-6"

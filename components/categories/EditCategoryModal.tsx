@@ -80,19 +80,6 @@ export default function EditCategoryModal({ category, onClose, onUpdate }: EditC
             />
           </div>
 
-          <div>
-            <label htmlFor="edit-email" className="block text-sm font-medium text-gray-700 mb-2">
-              Correo
-            </label>
-            <Input
-              id="edit-email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="correo@ejemplo.com"
-            />
-          </div>
-
           <div className="flex gap-4">
             <Button
               type="button"

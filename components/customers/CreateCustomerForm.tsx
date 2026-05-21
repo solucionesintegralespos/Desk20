@@ -82,25 +82,26 @@ export default function CreateCustomerForm() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Email <span className="text-red-500">*</span>
+            Email (Opcional)
           </label>
           <input
             type="email"
-            required
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             placeholder="cliente@ejemplo.com"
           />
+          <p className="text-sm text-gray-500 mt-1">
+            Si se deja en blanco, se generará uno temporal
+          </p>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Contraseña <span className="text-red-500">*</span>
+            Contraseña (Opcional)
           </label>
           <input
             type="password"
-            required
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -108,7 +109,7 @@ export default function CreateCustomerForm() {
             minLength={6}
           />
           <p className="text-sm text-gray-500 mt-1">
-            El cliente usará esta contraseña para acceder al sistema
+            Si se deja en blanco, se generará una automáticamente
           </p>
         </div>
 

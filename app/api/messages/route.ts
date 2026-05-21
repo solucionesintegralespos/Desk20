@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const { ticketId, content, isInternal, type } = await request.json()
+    const { ticketId, content, isInternal, type, attachments } = await request.json()
 
     if (!ticketId || !content) {
       return NextResponse.json(
@@ -31,6 +31,7 @@ export async function POST(request: Request) {
         type: type || 'COMMENT',
         ticketId,
         authorId: session.user.id,
+        attachments: attachments || [],
       },
       include: {
         author: {

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Headphones, AlertCircle } from 'lucide-react'
+import { useOrg } from '@/components/OrgProvider'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -16,6 +17,7 @@ export default function RegisterPage() {
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const { orgName, orgLogo } = useOrg()
 
   useEffect(() => {
     // Check if registration is enabled
@@ -67,13 +69,17 @@ export default function RegisterPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="flex justify-center">
-            <Headphones className="h-12 w-12 text-primary-600" />
+            {orgLogo ? (
+              <img src={orgLogo} alt={orgName} className="h-12 object-contain" />
+            ) : (
+              <Headphones className="h-12 w-12 text-primary-600" />
+            )}
           </div>
           <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
             Crear Cuenta
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Comienza con Desk20
+            Comienza con {orgName}
           </p>
         </div>
 

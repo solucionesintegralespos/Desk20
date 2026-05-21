@@ -104,7 +104,7 @@ export default async function TicketDetailPage({
   const openTicketsCount = await prisma.ticket.count({ where: countWhere })
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 flex-col md:flex-row">
       <Sidebar user={user} openTicketsCount={openTicketsCount} />
       
       <main className="flex-1 flex overflow-hidden">

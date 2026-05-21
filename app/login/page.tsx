@@ -5,6 +5,7 @@ import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Headphones } from 'lucide-react'
+import { useOrg } from '@/components/OrgProvider'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -16,6 +17,7 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
+  const { orgName, orgLogo } = useOrg()
 
   // Cargar email guardado al iniciar
   useEffect(() => {
@@ -128,7 +130,11 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="flex justify-center">
-            <Headphones className="h-12 w-12 text-primary-600" />
+            {orgLogo ? (
+              <img src={orgLogo} alt={orgName} className="h-12 object-contain" />
+            ) : (
+              <Headphones className="h-12 w-12 text-primary-600" />
+            )}
           </div>
           <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
             {showTwoFactor ? 'Verificación de Dos Factores' : 'Iniciar Sesión'}
@@ -136,7 +142,7 @@ export default function LoginPage() {
           <p className="mt-2 text-center text-sm text-gray-600">
             {showTwoFactor 
               ? 'Ingresa el código de tu aplicación de autenticación' 
-              : 'Accede a tu cuenta de Desk20'}
+              : `Accede a tu cuenta de ${orgName}`}
           </p>
         </div>
 

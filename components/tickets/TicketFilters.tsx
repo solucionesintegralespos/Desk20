@@ -69,8 +69,8 @@ export default function TicketFilters({
           />
         </div>
       </form>
-      <div className="flex items-center space-x-4">
-        <div className="flex items-center space-x-2 text-gray-700">
+      <div className="flex flex-col md:flex-row md:items-center gap-4">
+        <div className="hidden md:flex items-center space-x-2 text-gray-700">
           <Filter className="h-5 w-5" />
           <span className="font-medium">Filtros:</span>
         </div>
@@ -78,7 +78,7 @@ export default function TicketFilters({
         <select
           value={currentStatus || ''}
           onChange={(e) => updateFilter('status', e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-full md:w-auto px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         >
           <option value="">Todos los estados</option>
           <option value="OPEN">Abierto</option>
@@ -90,7 +90,7 @@ export default function TicketFilters({
         <select
           value={currentPriority || ''}
           onChange={(e) => updateFilter('priority', e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-full md:w-auto px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         >
           <option value="">Todas las prioridades</option>
           <option value="LOW">Baja</option>
@@ -102,7 +102,7 @@ export default function TicketFilters({
         <select
           value={currentAssignee || ''}
           onChange={(e) => updateFilter('assignee', e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-full md:w-auto px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         >
           <option value="">Todos los agentes</option>
           <option value="unassigned">Sin asignar</option>
@@ -116,7 +116,7 @@ export default function TicketFilters({
         {hasFilters && (
           <button
             onClick={clearFilters}
-            className="px-3 py-2 text-sm text-primary-600 hover:text-primary-700 font-medium"
+            className="w-full md:w-auto px-3 py-2 text-sm text-primary-600 hover:text-primary-700 font-medium md:text-left"
           >
             Limpiar filtros
           </button>

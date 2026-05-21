@@ -3,7 +3,7 @@
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { MessageType, UserRole } from '@prisma/client'
-import { Paperclip } from 'lucide-react'
+import { Paperclip, Download } from 'lucide-react'
 
 interface Message {
   id: string
@@ -32,6 +32,7 @@ interface MessageListProps {
       email: string
       avatar: string | null
     }
+    attachments?: string[]
   }
   messages: Message[]
   currentUserId: string
@@ -72,6 +73,74 @@ export default function MessageList({ ticket, messages, currentUserId }: Message
               <div className="mt-4 text-sm text-gray-700 whitespace-pre-wrap">
                 {ticket.description}
               </div>
+
+              {ticket.attachments && ticket.attachments.length > 0 && (
+                <div className="mt-4 border-t pt-4">
+                  <p className="text-xs font-medium text-gray-500 mb-2 uppercase">Archivos Adjuntos</p>
+                  <div className="flex flex-wrap gap-2">
+                    {ticket.attachments.map((attachment, index) => {
+                      const fileName = attachment.split('/').pop() || `Archivo ${index + 1}`
+                      const isUrl = attachment.startsWith('http') || attachment.startsWith('/')
+                      const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName)
+                      
+                      if (isUrl && isImage) {
+                        return (
+                          <div key={index} className="relative group inline-block">
+                            <a 
+                              href={attachment} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="block"
+                            >
+                              <img src={attachment} alt={fileName} className="max-w-full h-auto max-h-64 rounded-lg shadow-sm border border-gray-200 transition-opacity group-hover:opacity-90" />
+                            </a>
+                            <a
+                              href={attachment}
+                              download={fileName}
+                              className="absolute top-2 right-2 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                              title="Descargar imagen"
+                            >
+                              <Download className="h-4 w-4" />
+                            </a>
+                          </div>
+                        )
+                      }
+                      
+                      return isUrl ? (
+                        <div key={index} className="flex items-center bg-primary-50 rounded-lg border border-primary-100 overflow-hidden">
+                          <a 
+                            href={attachment} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="flex items-center space-x-2 text-sm text-primary-600 px-3 py-2 hover:bg-primary-100 flex-1"
+                          >
+                            <Paperclip className="h-4 w-4" />
+                            <span className="truncate max-w-xs">{fileName}</span>
+                          </a>
+                          <a
+                            href={attachment}
+                            download={fileName}
+                            className="p-2 text-primary-600 hover:bg-primary-100 border-l border-primary-100 transition-colors"
+                            title="Descargar archivo"
+                          >
+                            <Download className="h-4 w-4" />
+                          </a>
+                        </div>
+                      ) : (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => alert(`El archivo "${fileName}" es un registro visual. La funcionalidad de subir archivos reales está en desarrollo.`)}
+                          className="flex items-center space-x-2 text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg hover:bg-gray-100 text-left"
+                        >
+                          <Paperclip className="h-4 w-4 text-gray-400" />
+                          <span className="truncate max-w-xs">{fileName}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -129,13 +198,67 @@ export default function MessageList({ ticket, messages, currentUserId }: Message
                   </div>
 
                   {message.attachments.length > 0 && (
-                    <div className="mt-4 space-y-2">
-                      {message.attachments.map((attachment, index) => (
-                        <div key={index} className="flex items-center space-x-2 text-sm text-primary-600">
-                          <Paperclip className="h-4 w-4" />
-                          <span>{attachment}</span>
-                        </div>
-                      ))}
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {message.attachments.map((attachment, index) => {
+                        const fileName = attachment.split('/').pop() || `Archivo ${index + 1}`
+                        const isUrl = attachment.startsWith('http') || attachment.startsWith('/')
+                        const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName)
+                        
+                        if (isUrl && isImage) {
+                          return (
+                            <div key={index} className="relative group inline-block">
+                              <a
+                                href={attachment}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block"
+                              >
+                                <img src={attachment} alt={fileName} className="max-w-full h-auto max-h-64 rounded-lg shadow-sm border border-gray-200 transition-opacity group-hover:opacity-90" />
+                              </a>
+                              <a
+                                href={attachment}
+                                download={fileName}
+                                className="absolute top-2 right-2 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                title="Descargar imagen"
+                              >
+                                <Download className="h-4 w-4" />
+                              </a>
+                            </div>
+                          )
+                        }
+                        
+                        return isUrl ? (
+                          <div key={index} className="flex items-center bg-primary-50 rounded-lg border border-primary-100 overflow-hidden">
+                            <a
+                              href={attachment}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center space-x-2 text-sm text-primary-600 px-3 py-2 hover:bg-primary-100 flex-1"
+                            >
+                              <Paperclip className="h-4 w-4" />
+                              <span className="truncate max-w-xs">{fileName}</span>
+                            </a>
+                            <a
+                              href={attachment}
+                              download={fileName}
+                              className="p-2 text-primary-600 hover:bg-primary-100 border-l border-primary-100 transition-colors"
+                              title="Descargar archivo"
+                            >
+                              <Download className="h-4 w-4" />
+                            </a>
+                          </div>
+                        ) : (
+                          <button
+                            key={index}
+                            type="button"
+                            onClick={() => alert(`El archivo "${fileName}" es un registro visual. La funcionalidad de subir archivos reales está en desarrollo.`)}
+                            className="flex items-center space-x-2 text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg hover:bg-gray-100 text-left"
+                          >
+                            <Paperclip className="h-4 w-4 text-gray-400" />
+                            <span className="truncate max-w-xs">{fileName}</span>
+                          </button>
+                        )
+                      })}
                     </div>
                   )}
                 </div>

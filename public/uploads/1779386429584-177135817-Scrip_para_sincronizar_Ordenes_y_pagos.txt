@@ -1,0 +1,91 @@
+INSERT INTO sync_data_tbl (
+    sync_data_id,
+    data_key,
+    object_name,
+    date,
+    is_sent,
+    is_deleted
+)
+SELECT  
+NEWID(),
+order_id,
+'DAL.order_tbl',
+GETDATE(),
+0,
+0
+FROM Order_tbl o
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM sync_data_tbl s
+    WHERE s.data_key = o.order_id
+      AND s.object_name LIKE '%Order_tbl'
+)
+
+INSERT INTO sync_data_tbl (
+    sync_data_id,
+    data_key,
+    object_name,
+    date,
+    is_sent,
+    is_deleted
+)
+SELECT 
+NEWID(),
+order_lines_id,
+'DAL.order_lines_tbl',
+GETDATE(),
+0,
+0
+FROM Order_lines_tbl ol
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM sync_data_tbl s
+    WHERE s.data_key = ol.order_lines_id
+      AND s.object_name LIKE '%Order_lines_tbl'
+)
+
+INSERT INTO sync_data_tbl (
+    sync_data_id,
+    data_key,
+    object_name,
+    date,
+    is_sent,
+    is_deleted
+)
+SELECT 
+NEWID(),
+r_payments_orders_id,
+'DAL.r_payments_orders_tbl',
+GETDATE(),
+0,
+0
+FROM r_payments_orders_tbl rpo
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM sync_data_tbl s
+    WHERE s.data_key = rpo.r_payments_orders_id
+      AND s.object_name LIKE '%r_payments_orders_tbl'
+)
+
+INSERT INTO sync_data_tbl (
+    sync_data_id,
+    data_key,
+    object_name,
+    date,
+    is_sent,
+    is_deleted
+)
+SELECT 
+NEWID(),
+payments_id,
+'DAL.payments_tbl',
+GETDATE(),
+0,
+0
+FROM payments_tbl p
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM sync_data_tbl s
+    WHERE s.data_key = p.payments_id
+      AND s.object_name LIKE '%payments_tbl'
+);

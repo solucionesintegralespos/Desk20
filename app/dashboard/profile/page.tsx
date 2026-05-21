@@ -37,11 +37,11 @@ export default async function ProfilePage() {
   const openTicketsCount = await prisma.ticket.count({ where: countWhere })
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 flex-col md:flex-row">
       <Sidebar user={user} openTicketsCount={openTicketsCount} />
       
       <main className="flex-1 overflow-y-auto">
-        <div className="p-8">
+        <div className="p-4 md:p-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Mi Perfil</h1>
             <p className="text-gray-600 mt-2">Administra tu información personal y preferencias</p>

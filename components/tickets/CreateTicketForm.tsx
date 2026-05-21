@@ -35,7 +35,7 @@ export default function CreateTicketForm({ currentUser }: CreateTicketFormProps)
     subject: '',
     description: '',
     priority: 'NORMAL',
-    type: '',
+    type: 'INCIDENT',
     categoryId: '',
     hours: '',
     tags: '',
@@ -92,9 +92,17 @@ export default function CreateTicketForm({ currentUser }: CreateTicketFormProps)
       formData.append('file', file)
       
       try {
-        // Por ahora, guardamos solo el nombre del archivo
-        // En producción, aquí subirías a un servicio como S3, Cloudinary, etc.
-        uploadedUrls.push(file.name)
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
+        
+        if (response.ok) {
+          const data = await response.json()
+          uploadedUrls.push(data.url)
+        } else {
+          console.error('Error al subir archivo:', await response.text())
+        }
       } catch (error) {
         console.error('Error uploading file:', error)
       }
@@ -317,9 +325,10 @@ export default function CreateTicketForm({ currentUser }: CreateTicketFormProps)
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Categoría
+              Categoría <span className="text-red-500">*</span>
             </label>
             <select
+              required
               value={formData.categoryId}
               onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"

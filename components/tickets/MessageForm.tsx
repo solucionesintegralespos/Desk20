@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Send, Paperclip, Sparkles } from 'lucide-react'
+import { Send, Paperclip, Sparkles, File, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface MessageFormProps {
@@ -15,6 +15,45 @@ export default function MessageForm({ ticketId, currentUserId }: MessageFormProp
   const [isInternal, setIsInternal] = useState(false)
   const [loading, setLoading] = useState(false)
   const [aiLoading, setAiLoading] = useState(false)
+  const [attachments, setAttachments] = useState<File[]>([])
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files)
+      setAttachments(prev => [...prev, ...newFiles])
+    }
+  }
+
+  const removeAttachment = (index: number) => {
+    setAttachments(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const uploadFiles = async (files: File[]): Promise<string[]> => {
+    const uploadedUrls: string[] = []
+    
+    for (const file of files) {
+      const formData = new FormData()
+      formData.append('file', file)
+      
+      try {
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
+        
+        if (response.ok) {
+          const data = await response.json()
+          uploadedUrls.push(data.url)
+        } else {
+          console.error('Error al subir archivo:', await response.text())
+        }
+      } catch (error) {
+        console.error('Error uploading file:', error)
+      }
+    }
+    
+    return uploadedUrls
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,6 +63,7 @@ export default function MessageForm({ ticketId, currentUserId }: MessageFormProp
     setLoading(true)
 
     try {
+      const attachmentUrls = await uploadFiles(attachments)
       // Detectar si el mensaje contiene @ia
       const hasAiMention = content.toLowerCase().includes('@ia')
       
@@ -38,6 +78,7 @@ export default function MessageForm({ ticketId, currentUserId }: MessageFormProp
             ticketId,
             content,
             isInternal: true, // Los mensajes con @ia son internos por defecto
+            attachments: attachmentUrls,
           }),
         })
 
@@ -74,6 +115,7 @@ export default function MessageForm({ ticketId, currentUserId }: MessageFormProp
             ticketId,
             content,
             isInternal,
+            attachments: attachmentUrls,
           }),
         })
 
@@ -84,6 +126,7 @@ export default function MessageForm({ ticketId, currentUserId }: MessageFormProp
 
       setContent('')
       setIsInternal(false)
+      setAttachments([])
       router.refresh()
     } catch (error) {
       console.error('Error sending message:', error)
@@ -115,13 +158,22 @@ export default function MessageForm({ ticketId, currentUserId }: MessageFormProp
         
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <button
-              type="button"
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
-            >
-              <Paperclip className="h-5 w-5" />
-              <span className="text-sm">Adjuntar archivo</span>
-            </button>
+            <div className="relative">
+              <input
+                type="file"
+                multiple
+                onChange={handleFileChange}
+                className="hidden"
+                id="message-file-upload"
+              />
+              <label
+                htmlFor="message-file-upload"
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 cursor-pointer"
+              >
+                <Paperclip className="h-5 w-5" />
+                <span className="text-sm">Adjuntar archivo</span>
+              </label>
+            </div>
             
             {!content.toLowerCase().includes('@ia') && (
               <label className="flex items-center space-x-2 cursor-pointer">
@@ -159,6 +211,37 @@ export default function MessageForm({ ticketId, currentUserId }: MessageFormProp
             )}
           </button>
         </div>
+
+        {attachments.length > 0 && (
+          <div className="mt-4 border-t pt-4 space-y-2">
+            <p className="text-sm font-medium text-gray-700">
+              Archivos seleccionados ({attachments.length}):
+            </p>
+            {attachments.map((file, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between p-2 bg-gray-50 rounded-lg max-w-md"
+              >
+                <div className="flex items-center space-x-3 overflow-hidden">
+                  <File className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                  <div className="truncate">
+                    <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
+                    <p className="text-xs text-gray-500">
+                      {(file.size / 1024).toFixed(1)} KB
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeAttachment(index)}
+                  className="text-red-500 hover:text-red-700 p-1"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </form>
     </div>
   )
