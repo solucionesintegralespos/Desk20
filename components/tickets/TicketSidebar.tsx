@@ -280,8 +280,8 @@ export default function TicketSidebar({ ticket, interactions }: TicketSidebarPro
 
         <div className="space-y-3">
           <div className="flex items-center space-x-2 text-sm">
-            <Mail className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-700">{ticket.customer.email}</span>
+            <Mail className="h-4 w-4 text-gray-400 shrink-0" />
+            <span className="text-gray-700 break-all">{ticket.customer.email}</span>
           </div>
           
           {ticket.customer.phone && (

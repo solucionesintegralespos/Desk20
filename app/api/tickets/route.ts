@@ -85,7 +85,7 @@ export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions)
     const body = await request.json()
-    const { subject, description, priority, type, categoryId, hours, tags, customerId, attachments } = body
+    const { subject, description, priority, type, categoryId, hours, tags, customerId, attachments, assigneeId } = body
 
     console.log('Session:', session)
     console.log('CustomerId from body:', customerId)
@@ -152,6 +152,10 @@ export async function POST(request: Request) {
     
     if (hours !== null && hours !== undefined && hours !== '') {
       ticketData.hours = parseFloat(hours)
+    }
+    
+    if (assigneeId) {
+      ticketData.assigneeId = assigneeId
     }
 
     console.log('Ticket data:', ticketData)

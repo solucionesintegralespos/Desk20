@@ -3,8 +3,9 @@
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { MessageType, UserRole } from '@prisma/client'
-import { Paperclip, Download } from 'lucide-react'
+import { Paperclip, Download, Trash2 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 interface Message {
   id: string
@@ -43,10 +44,30 @@ import { useState, useEffect } from 'react'
 
 export default function MessageList({ ticket, messages, currentUserId }: MessageListProps) {
   const [mounted, setMounted] = useState(false)
+  const router = useRouter()
   
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  const handleDeleteMessage = async (messageId: string) => {
+    if (!confirm('¿Estás seguro de eliminar este mensaje?')) return
+    try {
+      const response = await fetch(`/api/messages/${messageId}`, {
+        method: 'DELETE',
+      })
+      if (response.ok) {
+        toast.success('Mensaje eliminado')
+        router.refresh()
+      } else {
+        const error = await response.json()
+        toast.error(error.error || 'Error al eliminar el mensaje')
+      }
+    } catch (error) {
+      toast.error('Error al eliminar el mensaje')
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Descripción inicial del ticket */}
@@ -199,6 +220,15 @@ export default function MessageList({ ticket, messages, currentUserId }: Message
                         )}
                       </div>
                     </div>
+                    {isCurrentUser && (Date.now() - new Date(message.createdAt).getTime() <= 60000) && mounted && (
+                      <button
+                        onClick={() => handleDeleteMessage(message.id)}
+                        className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition"
+                        title="Eliminar mensaje"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
                   </div>
                   
                   <div className="mt-4 text-sm text-gray-700 whitespace-pre-wrap">

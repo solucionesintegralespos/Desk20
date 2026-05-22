@@ -163,7 +163,7 @@ export default async function SettingsPage() {
               <div className="p-6 space-y-4">
                 <div>
                   <p className="text-sm font-medium text-gray-900 mb-2">Versión del Sistema</p>
-                  <p className="text-sm text-gray-600">v1.1.0</p>
+                  <p className="text-sm text-gray-600">v1.1.1</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900 mb-2">Base de Datos</p>
@@ -171,7 +171,7 @@ export default async function SettingsPage() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900 mb-2">Última Actualización</p>
-                  <p className="text-sm text-gray-600">21 de Mayo de 2026</p>
+                  <p className="text-sm text-gray-600">22 de Mayo de 2026</p>
                 </div>
               </div>
             </div>

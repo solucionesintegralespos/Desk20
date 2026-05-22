@@ -39,15 +39,30 @@ export default function CreateTicketForm({ currentUser }: CreateTicketFormProps)
     categoryId: '',
     hours: '',
     tags: '',
+    assigneeId: '',
   })
   const [attachments, setAttachments] = useState<File[]>([])
+  const [agents, setAgents] = useState<Array<{ id: string; name: string | null; email: string }>>([])
 
   useEffect(() => {
     fetchCategories()
     if (currentUser.role !== 'CUSTOMER') {
       fetchCustomers()
+      fetchAgents()
     }
   }, [])
+
+  const fetchAgents = async () => {
+    try {
+      const response = await fetch('/api/users?role=AGENT,ADMIN')
+      if (response.ok) {
+        const data = await response.json()
+        setAgents(data)
+      }
+    } catch (error) {
+      console.error('Error al cargar agentes:', error)
+    }
+  }
 
   const fetchCategories = async () => {
     try {
@@ -166,6 +181,7 @@ export default function CreateTicketForm({ currentUser }: CreateTicketFormProps)
           customerId: formData.customerId,
           type: formData.type || null,
           categoryId: formData.categoryId || null,
+          assigneeId: formData.assigneeId || null,
           hours: formData.hours ? parseFloat(formData.hours) : null,
           tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
           attachments: attachmentUrls
@@ -357,6 +373,26 @@ export default function CreateTicketForm({ currentUser }: CreateTicketFormProps)
             />
           </div>
         </div>
+
+        {currentUser.role !== 'CUSTOMER' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Asignar a
+            </label>
+            <select
+              value={formData.assigneeId}
+              onChange={(e) => setFormData({ ...formData, assigneeId: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            >
+              <option value="">Sin asignar</option>
+              {Array.isArray(agents) && agents.map((agent) => (
+                <option key={agent.id} value={agent.id}>
+                  {agent.name || agent.email}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
