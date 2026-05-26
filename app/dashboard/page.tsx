@@ -56,6 +56,7 @@ export default async function DashboardPage() {
     prisma.ticket.count({ where: { ...statsWhere, status: 'OPEN' } }),
     prisma.ticket.count({ where: { ...statsWhere, status: 'PENDING' } }),
     prisma.ticket.count({ where: { ...statsWhere, status: 'SOLVED' } }),
+    prisma.ticket.count({ where: { ...statsWhere, status: 'CLOSED' } }),
     prisma.ticket.count({ where: statsWhere }),
   ])
 
@@ -75,7 +76,8 @@ export default async function DashboardPage() {
               open: stats[0],
               pending: stats[1],
               solved: stats[2],
-              total: stats[3],
+              closed: stats[3],
+              total: stats[4],
             }}
           />
 

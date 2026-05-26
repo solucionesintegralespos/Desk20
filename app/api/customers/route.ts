@@ -38,35 +38,44 @@ export async function POST(request: Request) {
       )
     }
 
-    if (!email) {
-      email = `cliente_${Date.now()}_${Math.random().toString(36).substring(7)}@desk20.local`
-    }
-    
-    if (!password) {
-      password = Math.random().toString(36).slice(-8)
+    const enableCustomerUsersSetting = await prisma.setting.findUnique({ where: { key: 'ENABLE_CUSTOMER_USERS' } })
+    const enableCustomerUsers = enableCustomerUsersSetting?.value === 'true'
+
+    if (enableCustomerUsers) {
+      if (!email) {
+        email = `cliente_${Date.now()}_${Math.random().toString(36).substring(7)}@desk20.local`
+      }
+      if (!password) {
+        password = Math.random().toString(36).slice(-8)
+      }
+    } else {
+      email = email || undefined
+      password = password || undefined
     }
 
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email }
-    })
+    // Check if user exists (only if email is provided)
+    if (email) {
+      const existingUser = await prisma.user.findUnique({
+        where: { email }
+      })
 
-    if (existingUser) {
-      return NextResponse.json(
-        { error: 'El email ya está registrado' },
-        { status: 400 }
-      )
+      if (existingUser) {
+        return NextResponse.json(
+          { error: 'El email ya está registrado' },
+          { status: 400 }
+        )
+      }
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined
 
     // Create customer (user with CUSTOMER role)
     const customer = await prisma.user.create({
       data: {
         name,
-        email,
-        password: hashedPassword,
+        email: email as any,
+        password: hashedPassword as any,
         role: 'CUSTOMER',
         phone,
         location,

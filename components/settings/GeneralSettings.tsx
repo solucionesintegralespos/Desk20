@@ -8,18 +8,24 @@ interface GeneralSettingsProps {
   initialOrgName?: string
   initialOrgEmail?: string
   initialOrgLogo?: string
+  initialDisableLanding?: string
+  initialEnableCustomerUsers?: string
 }
 
 export default function GeneralSettings({
   initialOrgName = 'Desk20',
   initialOrgEmail = 'soporte@desk20.com',
-  initialOrgLogo = ''
+  initialOrgLogo = '',
+  initialDisableLanding = 'false',
+  initialEnableCustomerUsers = 'false'
 }: GeneralSettingsProps) {
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     org_name: initialOrgName,
     org_email: initialOrgEmail,
-    org_logo: initialOrgLogo
+    org_logo: initialOrgLogo,
+    DISABLE_LANDING_PAGE: initialDisableLanding,
+    ENABLE_CUSTOMER_USERS: initialEnableCustomerUsers
   })
 
   const handleSave = async () => {
@@ -96,6 +102,42 @@ export default function GeneralSettings({
               <img src={formData.org_logo} alt="Logo preview" className="h-8 object-contain" />
             </div>
           )}
+        </div>
+
+        <div className="pt-4 border-t">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Opciones Avanzadas</h3>
+          
+          <div className="space-y-4">
+            <label className="flex items-start space-x-3 cursor-pointer">
+              <div className="flex items-center h-5">
+                <input
+                  type="checkbox"
+                  checked={formData.DISABLE_LANDING_PAGE === 'true'}
+                  onChange={e => setFormData({ ...formData, DISABLE_LANDING_PAGE: e.target.checked ? 'true' : 'false' })}
+                  className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-gray-700">Desactivar Landing Page</span>
+                <span className="text-sm text-gray-500">Redirigir a los visitantes directamente al inicio de sesión o panel</span>
+              </div>
+            </label>
+
+            <label className="flex items-start space-x-3 cursor-pointer">
+              <div className="flex items-center h-5">
+                <input
+                  type="checkbox"
+                  checked={formData.ENABLE_CUSTOMER_USERS === 'true'}
+                  onChange={e => setFormData({ ...formData, ENABLE_CUSTOMER_USERS: e.target.checked ? 'true' : 'false' })}
+                  className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-gray-700">Crear Credenciales para Clientes</span>
+                <span className="text-sm text-gray-500">Solicitar y generar contraseña al crear un cliente nuevo</span>
+              </div>
+            </label>
+          </div>
         </div>
       </div>
     </div>

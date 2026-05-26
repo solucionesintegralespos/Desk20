@@ -2,13 +2,14 @@
 
 import Link from 'next/link'
 import { TicketStatus, TicketPriority } from '@prisma/client'
-import { MessageSquare, Clock, CheckCircle, Circle } from 'lucide-react'
+import { MessageSquare, Clock, CheckCircle, Circle, XCircle } from 'lucide-react'
 
 interface StatsCardsProps {
   stats: {
     open: number
     pending: number
     solved: number
+    closed: number
     total: number
   }
 }
@@ -40,6 +41,14 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       link: '/dashboard/tickets?status=SOLVED',
     },
     {
+      title: 'Cerrados',
+      value: stats.closed,
+      icon: XCircle,
+      color: 'text-gray-600',
+      bgColor: 'bg-gray-100',
+      link: '/dashboard/tickets?status=CLOSED',
+    },
+    {
       title: 'Total',
       value: stats.total,
       icon: MessageSquare,
@@ -50,7 +59,7 @@ export default function StatsCards({ stats }: StatsCardsProps) {
   ]
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
       {cards.map((card) => {
         const Icon = card.icon
         return (

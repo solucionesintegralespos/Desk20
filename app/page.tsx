@@ -1,7 +1,17 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { prisma } from '@/lib/prisma'
 import { Headphones, MessageSquare, BarChart3, Users, Shield, Zap, Github } from 'lucide-react'
 
-export default function HomePage() {
+export default async function HomePage() {
+  const disableLandingSetting = await prisma.setting.findUnique({
+    where: { key: 'DISABLE_LANDING_PAGE' }
+  })
+
+  if (disableLandingSetting?.value === 'true') {
+    redirect('/dashboard')
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}

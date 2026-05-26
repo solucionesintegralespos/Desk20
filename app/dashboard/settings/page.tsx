@@ -2,6 +2,8 @@ import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import fs from 'fs'
+import path from 'path'
 import Sidebar from '@/components/dashboard/Sidebar'
 import ChatGPTSettings from '@/components/settings/ChatGPTSettings'
 import TwoFactorSettings from '@/components/settings/TwoFactorSettings'
@@ -19,6 +21,30 @@ export default async function SettingsPage() {
   if (!session) {
     redirect('/login')
   }
+
+  // Leer versión del package.json
+  const packageJsonPath = path.join(process.cwd(), 'package.json')
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+  const systemVersion = packageJson.version
+
+  // Obtener fecha del build
+  let buildDate = new Date()
+  try {
+    const buildIdPath = path.join(process.cwd(), '.next', 'BUILD_ID')
+    if (fs.existsSync(buildIdPath)) {
+      buildDate = fs.statSync(buildIdPath).mtime
+    } else {
+      buildDate = fs.statSync(path.join(process.cwd(), '.next')).mtime
+    }
+  } catch (e) {
+    console.error('Error al obtener fecha del build', e)
+  }
+
+  const formattedBuildDate = buildDate.toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
 
   // Obtener usuario completo con su rol
   const user = await prisma.user.findUnique({
@@ -61,7 +87,7 @@ export default async function SettingsPage() {
   const orgSettings = await prisma.setting.findMany({
     where: {
       key: {
-        in: ['org_name', 'org_email', 'org_logo']
+        in: ['org_name', 'org_email', 'org_logo', 'DISABLE_LANDING_PAGE', 'ENABLE_CUSTOMER_USERS']
       }
     }
   })
@@ -150,6 +176,8 @@ export default async function SettingsPage() {
               initialOrgName={orgInfo.org_name}
               initialOrgEmail={orgInfo.org_email}
               initialOrgLogo={orgInfo.org_logo}
+              initialDisableLanding={orgInfo.DISABLE_LANDING_PAGE}
+              initialEnableCustomerUsers={orgInfo.ENABLE_CUSTOMER_USERS}
             />
 
             {/* Configuración de Sistema */}
@@ -163,7 +191,7 @@ export default async function SettingsPage() {
               <div className="p-6 space-y-4">
                 <div>
                   <p className="text-sm font-medium text-gray-900 mb-2">Versión del Sistema</p>
-                  <p className="text-sm text-gray-600">v1.1.1</p>
+                  <p className="text-sm text-gray-600">v{systemVersion}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900 mb-2">Base de Datos</p>
@@ -171,16 +199,10 @@ export default async function SettingsPage() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900 mb-2">Última Actualización</p>
-                  <p className="text-sm text-gray-600">22 de Mayo de 2026</p>
+                  <p className="text-sm text-gray-600">{formattedBuildDate}</p>
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm text-blue-800">
-              <strong>Nota:</strong> Las opciones de configuración están en desarrollo. Próximamente podrás editar todos estos valores y personalizar tu sistema.
-            </p>
           </div>
         </div>
       </main>

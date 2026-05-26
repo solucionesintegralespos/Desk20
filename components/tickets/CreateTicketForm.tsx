@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Upload, X, File, Sparkles } from 'lucide-react'
+import { ArrowLeft, Upload, X, File as FileIcon, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 
 interface Category {
@@ -98,6 +98,27 @@ export default function CreateTicketForm({ currentUser }: CreateTicketFormProps)
   const removeAttachment = (index: number) => {
     setAttachments(prev => prev.filter((_, i) => i !== index))
   }
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    const newFiles: File[] = [];
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        const file = items[i].getAsFile();
+        if (file) {
+          const extension = file.type.split('/')[1] || 'png';
+          const pastedFile = new File([file], `pasted_image_${Date.now()}.${extension}`, { type: file.type });
+          newFiles.push(pastedFile);
+        }
+      }
+    }
+
+    if (newFiles.length > 0) {
+      setAttachments(prev => [...prev, ...newFiles]);
+    }
+  };
 
   const uploadFiles = async (files: File[]): Promise<string[]> => {
     const uploadedUrls: string[] = []
@@ -295,9 +316,10 @@ export default function CreateTicketForm({ currentUser }: CreateTicketFormProps)
           <textarea
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            onPaste={handlePaste}
             rows={6}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            placeholder="Proporciona más detalles sobre el problema"
+            placeholder="Proporciona más detalles sobre el problema. Puedes pegar imágenes (Ctrl+V)."
           />
           <p className="text-xs text-gray-500 mt-1">
             💡 Usa el botón "Mejorar con IA" para obtener una descripción más clara y profesional
@@ -439,33 +461,51 @@ export default function CreateTicketForm({ currentUser }: CreateTicketFormProps)
           </div>
 
           {attachments.length > 0 && (
-            <div className="mt-4 space-y-2">
-              <p className="text-sm font-medium text-gray-700">
+            <div className="mt-4">
+              <p className="text-sm font-medium text-gray-700 mb-3">
                 Archivos seleccionados ({attachments.length}):
               </p>
-              {attachments.map((file, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                >
-                  <div className="flex items-center space-x-3">
-                    <File className="h-5 w-5 text-gray-400" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{file.name}</p>
-                      <p className="text-xs text-gray-500">
-                        {(file.size / 1024).toFixed(1)} KB
-                      </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {attachments.map((file, index) => {
+                  const isImage = file.type.startsWith('image/')
+                  return (
+                    <div
+                      key={index}
+                      className="relative group rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm"
+                    >
+                      {isImage ? (
+                        <div className="aspect-square sm:aspect-video w-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                          <img 
+                            src={URL.createObjectURL(file)} 
+                            alt="Preview" 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="aspect-square sm:aspect-video w-full bg-gray-50 flex items-center justify-center">
+                          <FileIcon className="h-8 w-8 text-gray-400" />
+                        </div>
+                      )}
+                      <div className="p-3 bg-white border-t border-gray-100">
+                        <p className="text-sm font-medium text-gray-900 truncate" title={file.name}>
+                          {file.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {(file.size / 1024).toFixed(1)} KB
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeAttachment(index)}
+                        className="absolute top-2 right-2 p-1.5 bg-white/90 hover:bg-white rounded-full text-red-500 hover:text-red-700 shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-200"
+                        title="Eliminar archivo"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
                     </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => removeAttachment(index)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
-              ))}
+                  )
+                })}
+              </div>
             </div>
           )}
         </div>
